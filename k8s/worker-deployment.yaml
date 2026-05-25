@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crypto-worker
+  namespace: crypto-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: crypto-worker
+  template:
+    metadata:
+      labels:
+        app: crypto-worker
+    spec:
+      containers:
+        - name: crypto-worker
+          image: crypto-worker:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: DB_HOST
+              value: postgres
+            - name: DB_NAME
+              value: cryptodb
+            - name: DB_USER
+              value: crypto_user
+            - name: DB_PASSWORD
+              value: crypto_pass

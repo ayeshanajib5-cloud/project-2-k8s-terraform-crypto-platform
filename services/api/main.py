@@ -33,7 +33,7 @@ def get_price(coin: str):
 
 @app.post("/track/{coin}")
 def track_coin(coin: str):
-    job = queue.enqueue(fetch_crypto_price, coin)
+    job = queue.enqueue("worker.fetch_and_store_price", coin)
     return {
         "message": "Tracking job added",
         "coin": coin,
