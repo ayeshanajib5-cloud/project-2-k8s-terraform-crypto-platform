@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crypto-config
+  namespace: crypto-platform
+data:
+  REDIS_HOST: redis
+  DB_HOST: postgres
+  DB_NAME: cryptodb
+  DB_USER: crypto_user
