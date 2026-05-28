@@ -3,35 +3,61 @@ kind: Deployment
 metadata:
   name: crypto-worker
   namespace: crypto-platform
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: crypto-worker
+
   template:
     metadata:
       labels:
         app: crypto-worker
+
     spec:
       containers:
         - name: crypto-worker
           image: crypto-worker:latest
           imagePullPolicy: IfNotPresent
+
           env:
             - name: REDIS_HOST
-              value: redis
+              valueFrom:
+                configMapKeyRef:
+                  name: crypto-config
+                  key: REDIS_HOST
+
             - name: DB_HOST
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: crypto-config
+                  key: DB_HOST
+
             - name: DB_NAME
-              value: cryptodb
+              valueFrom:
+                configMapKeyRef:
+                  name: crypto-config
+                  key: DB_NAME
+
             - name: DB_USER
-              value: crypto_user
+              valueFrom:
+                configMapKeyRef:
+                  name: crypto-config
+                  key: DB_USER
+
             - name: DB_PASSWORD
-              value: crypto_pass
-      resources:
-          requests:
+              valueFrom:
+                secretKeyRef:
+                  name: crypto-secrets
+                  key: DB_PASSWORD
+
+          resources:
+            requests:
               cpu: "100m"
               memory: "128Mi"
-          limits:
+
+            limits:
               cpu: "500m"
               memory: "256Mi"

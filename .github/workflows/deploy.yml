@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install API Dependencies
+        run: |
+          pip install -r services/api/requirements.txt
+
+      - name: Install Worker Dependencies
+        run: |
+          pip install -r services/worker/requirements.txt
+
+      - name: Build API Docker Image
+        run: |
+          docker build -t crypto-api ./services/api
+
+      - name: Build Worker Docker Image
+        run: |
+          docker build -t crypto-worker ./services/worker
