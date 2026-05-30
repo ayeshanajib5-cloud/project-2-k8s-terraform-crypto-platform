@@ -1,4 +1,18 @@
+# Python
 venv/
 __pycache__/
-.env
 *.pyc
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# VS Code
+.vscode/
+
+# Kubernetes temp
+*.log
+
+# OS
+.DS_Store

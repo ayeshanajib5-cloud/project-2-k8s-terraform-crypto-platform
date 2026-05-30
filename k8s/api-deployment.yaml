@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: crypto-api
-          image: crypto-api:latest
-          imagePullPolicy: IfNotPresent
+          image: khalil1545/crypto-api:latest
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 8000

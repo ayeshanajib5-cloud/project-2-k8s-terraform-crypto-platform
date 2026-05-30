@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: crypto-worker
-          image: crypto-worker:latest
-          imagePullPolicy: IfNotPresent
+          image: khalil1545/crypto-worker:latest
+          imagePullPolicy: Always
 
           env:
             - name: REDIS_HOST
