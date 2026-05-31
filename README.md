@@ -1,14 +1,14 @@
 # Production-Grade Kubernetes & Terraform Cloud Platform
 
-A cloud-native DevOps project built to demonstrate real-world Kubernetes, Docker, Terraform, CI/CD, monitoring, and microservices deployment using live crypto market data.
+A cloud-native DevOps platform built to demonstrate production-level Kubernetes orchestration, Docker containerization, Terraform infrastructure provisioning, CI/CD automation, monitoring, and scalable microservices deployment using live cryptocurrency market data.
 
 ---
 
 # Project Overview
 
-This project is a scalable crypto price tracking platform. Users can request live crypto prices through a FastAPI service. The API sends jobs to a Redis queue, worker containers fetch live data from the CoinGecko API, and processed prices are stored in PostgreSQL.
+This project is a scalable crypto price tracking platform deployed on AWS EKS. Users can request live cryptocurrency prices through a FastAPI backend service. The API sends jobs into a Redis queue, worker containers process the jobs using the CoinGecko API, and processed data is stored inside PostgreSQL.
 
-The platform is containerized with Docker, deployed on Kubernetes, monitored using Prometheus and Grafana, and prepared for cloud deployment using Terraform and AWS EKS.
+The platform is fully containerized with Docker, orchestrated using Kubernetes, provisioned with Terraform, monitored using Prometheus and Grafana, integrated with AWS CloudWatch logging, and deployed on Amazon EKS.
 
 ---
 
@@ -21,39 +21,46 @@ The platform is containerized with Docker, deployed on Kubernetes, monitored usi
 - Redis
 - PostgreSQL
 - Kubernetes
+- AWS EKS
+- Terraform
 - Nginx Ingress Controller
 - Horizontal Pod Autoscaler (HPA)
 - Prometheus
 - Grafana
+- AWS CloudWatch
 - GitHub Actions
-- Terraform
-- AWS EKS
+- Docker Hub
 
 ---
 
-# Architecture
+# Production Architecture
 
 ```text
-User
- |
- | HTTP Request
- v
-FastAPI Service
- |
- | Job Queue
- v
-Redis
- |
- | Worker Pods
- v
+User Request
+      |
+      v
+AWS LoadBalancer / Ingress
+      |
+      v
+FastAPI Service (Kubernetes Pods)
+      |
+      v
+Redis Queue
+      |
+      v
+Worker Pods
+      |
+      v
 CoinGecko API
- |
- | Store Data
- v
-PostgreSQL
- |
- v
+      |
+      v
+PostgreSQL Database
+      |
+      v
 Prometheus + Grafana Monitoring
+      |
+      v
+AWS CloudWatch Logging
 ```
 
 ---
@@ -64,8 +71,9 @@ Prometheus + Grafana Monitoring
 infra/              Terraform infrastructure files
 k8s/                Kubernetes manifests
 services/api/       FastAPI backend service
-services/worker/    Redis worker service
+services/worker/    Worker microservice
 monitoring/         Monitoring configuration
+images/             Architecture and deployment screenshots
 .github/            GitHub Actions workflows
 ```
 
@@ -73,21 +81,24 @@ monitoring/         Monitoring configuration
 
 # Features
 
-- Live crypto price tracking
+- Live cryptocurrency price tracking
 - CoinGecko API integration
-- Redis-based queue processing
+- Redis queue-based processing
 - Worker microservice architecture
-- PostgreSQL price storage
-- Dockerized services
-- Kubernetes deployments and services
+- PostgreSQL data persistence
+- Docker containerization
+- Kubernetes orchestration
+- AWS EKS deployment
+- Terraform infrastructure provisioning
 - ConfigMaps and Secrets
+- Rolling update deployments
 - Liveness and readiness probes
-- Rolling update deployment strategy
 - Horizontal Pod Autoscaling
-- Nginx Ingress routing
-- Prometheus metrics
+- Ingress-based routing
+- Prometheus metrics collection
 - Grafana monitoring dashboards
-- GitHub Actions CI/CD pipeline
+- AWS CloudWatch integration
+- GitHub Actions CI/CD automation
 
 ---
 
@@ -110,6 +121,22 @@ POST /track/ethereum
 
 ---
 
+# Public Deployment URLs
+
+Swagger Documentation:
+
+```text
+http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/docs
+```
+
+Health Endpoint:
+
+```text
+http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
+```
+
+---
+
 # Local Docker Setup
 
 Run:
@@ -118,7 +145,7 @@ Run:
 docker compose up --build
 ```
 
-Open API Dashboard:
+Open:
 
 ```text
 http://localhost:8000/docs
@@ -128,7 +155,7 @@ http://localhost:8000/docs
 
 # Kubernetes Deployment
 
-Apply manifests:
+Apply Kubernetes manifests:
 
 ```bash
 kubectl apply -f k8s/namespace.yaml
@@ -143,29 +170,40 @@ kubectl apply -f k8s/hpa.yaml
 kubectl apply -f k8s/ingress.yaml
 ```
 
-Check pods:
+Check cluster resources:
 
 ```bash
 kubectl get pods -n crypto-platform
-```
-
-Port forward API:
-
-```bash
-kubectl port-forward svc/crypto-api-service 8000:8000 -n crypto-platform
-```
-
-Open:
-
-```text
-http://localhost:8000/docs
+kubectl get svc -n crypto-platform
+kubectl get hpa -n crypto-platform
 ```
 
 ---
 
-# Monitoring
+# Terraform Infrastructure Deployment
 
-Prometheus and Grafana are installed using Helm.
+Terraform provisions:
+
+- AWS VPC
+- Public subnets
+- EKS cluster
+- Managed node groups
+- Security groups
+- IAM integrations
+
+Terraform workflow:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+---
+
+# Monitoring & Observability
+
+Prometheus and Grafana are deployed using Helm on Kubernetes.
 
 Install monitoring stack:
 
@@ -179,23 +217,35 @@ Open Grafana:
 kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
 ```
 
-Grafana URL:
+Grafana Dashboard:
 
 ```text
 http://localhost:3000
 ```
 
+Monitoring includes:
+
+- Kubernetes cluster metrics
+- Pod resource usage
+- Node monitoring
+- API metrics
+- Worker metrics
+- Infrastructure observability
+
+CloudWatch log groups are configured for AWS EKS cluster logging.
+
 ---
 
 # CI/CD Pipeline
 
-GitHub Actions workflow runs automatically on every push to the main branch.
+GitHub Actions pipeline automatically runs on every push to the main branch.
 
-The pipeline:
-- checks out code
-- installs Python dependencies
-- builds API Docker image
-- builds worker Docker image
+Pipeline tasks:
+
+- Checkout repository
+- Install dependencies
+- Build Docker images
+- Validate deployment workflow
 
 ---
 
@@ -204,48 +254,126 @@ The pipeline:
 - Microservices architecture
 - Containerized workloads
 - Kubernetes orchestration
-- Health checks
-- Readiness checks
+- Infrastructure as Code (Terraform)
+- AWS cloud deployment
 - Autoscaling
-- ConfigMaps and Secrets
-- Ingress routing
-- Monitoring and observability
-- Git-based workflow
+- Readiness and liveness probes
+- Centralized monitoring
+- Cloud logging
 - CI/CD automation
+- Rolling deployments
+- Ingress routing
+- Secrets management
 
 ---
 
 # Screenshots
 
-Add screenshots here:
+## AWS EKS Cluster Ready
 
-```text
-1. FastAPI Swagger dashboard
-2. Kubernetes pods
-3. Kubernetes services
-4. HPA status
-5. Grafana dashboard
-6. Prometheus dashboard
-7. GitHub Actions success
-8. Ingress health endpoint
-```
+![EKS Cluster Ready](images/nodegroup-active.png)
+
+---
+
+## Kubernetes Worker Nodes
+
+![Kubernetes Nodes](images/kubectl-nodes.png)
+
+---
+
+## Running Application Pods
+
+![Running Pods](images/pods-running.png)
+
+---
+
+## Kubernetes Services
+
+![Services](images/services-running.png)
+
+---
+
+## FastAPI Swagger Documentation
+
+![Swagger Docs](images/swagger-working-1.png)
+
+---
+
+## FastAPI Endpoints Working
+
+![Swagger Working](images/swagger-working-2.png)
+
+---
+
+## Ingress & Public Access
+
+![Ingress](images/ingress-docs.png)
+
+---
+
+## Horizontal Pod Autoscaler (HPA)
+
+![HPA](images/hpa.png)
+
+---
+
+## Redis & PostgreSQL Services
+
+![Redis PostgreSQL](images/redis-postgres.png)
+
+---
+
+## Grafana & Prometheus Monitoring
+
+![Grafana Dashboard](images/grafana-dashboard.png)
+
+---
+
+## AWS CloudWatch Logs
+
+![CloudWatch Logs](images/cloudwatch-logs.png)
+
+---
+
+## GitHub Actions CI/CD Pipeline
+
+![GitHub Actions](images/github-actions.png)
+
+---
+
+## System Architecture Diagram
+
+![Architecture Diagram](images/architecture.png)
 
 ---
 
 # Future Improvements
 
-- Deploy to AWS EKS using Terraform
-- Add AWS ECR image registry
-- Add CloudWatch logging
-- Add production IAM least-privilege roles
-- Add remote Terraform state using S3 and DynamoDB
-- Add HTTPS with cert-manager
-- Add authentication for API endpoints
+- Amazon ECR integration
+- HTTPS with cert-manager
+- ArgoCD GitOps deployment
+- AWS IAM least-privilege roles
+- Terraform remote state with S3 and DynamoDB
+- API authentication and rate limiting
+- Advanced alerting rules
+- Multi-environment deployment strategy
 
 ---
 
-# Status
+# Final Status
 
-Local production-style Kubernetes deployment is complete.
+Production-grade Kubernetes deployment is fully operational on AWS EKS.
 
-Cloud deployment with Terraform and AWS EKS is planned as the next phase.
+Completed successfully:
+
+- AWS EKS deployment
+- Terraform infrastructure provisioning
+- Kubernetes orchestration
+- Docker containerization
+- Prometheus monitoring
+- Grafana dashboards
+- CloudWatch logging
+- GitHub Actions CI/CD
+- Public API deployment
+- Horizontal Pod Autoscaling
+- Redis & PostgreSQL integration
