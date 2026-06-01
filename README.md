@@ -4,6 +4,10 @@ A cloud-native DevOps platform built to demonstrate production-level Kubernetes 
 
 ---
 
+![CI/CD Pipeline](https://github.com/ayeshanajib5-cloud/project-2-k8s-terraform-crypto-platform/actions/workflows/deploy.yml/badge.svg)
+
+> **Note:** This project provisions AWS infrastructure using Terraform and EKS. Running this project on AWS may create costs. Destroy resources after testing using `terraform destroy`.
+
 # Project Overview
 
 This project is a scalable crypto price tracking platform deployed on AWS EKS. Users can request live cryptocurrency prices through a FastAPI backend service. The API sends jobs into a Redis queue, worker containers process the jobs using the CoinGecko API, and processed data is stored inside PostgreSQL.
@@ -11,6 +15,12 @@ This project is a scalable crypto price tracking platform deployed on AWS EKS. U
 The platform is fully containerized with Docker, orchestrated using Kubernetes, provisioned with Terraform, monitored using Prometheus and Grafana, integrated with AWS CloudWatch logging, and deployed on Amazon EKS.
 
 ---
+
+# Business / Use Case
+
+Crypto market platforms need reliable, scalable, and automated systems to collect, process, and expose live market data. This project demonstrates how a production-style cloud-native platform can handle crypto price tracking using microservices, queues, databases, monitoring, and automated deployment.
+
+The same architecture can be adapted for fintech dashboards, trading analytics, price alert systems, portfolio tracking tools, and real-time financial data pipelines.
 
 # Tech Stack
 
@@ -32,6 +42,18 @@ The platform is fully containerized with Docker, orchestrated using Kubernetes, 
 - Docker Hub
 
 ---
+
+# Docker Images
+
+The application images are published on Docker Hub:
+
+```text
+API Image:
+https://hub.docker.com/r/khalil1545/crypto-api
+
+Worker Image:
+https://hub.docker.com/r/khalil1545/crypto-worker
+
 
 # Production Architecture
 
@@ -135,6 +157,14 @@ Health Endpoint:
 http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
 ```
 
+> These public endpoints are available only while the AWS EKS infrastructure is running.
+
+Swagger Documentation:
+
+```text
+http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/docs
+
+http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
 ---
 
 # Local Docker Setup
@@ -199,6 +229,43 @@ terraform plan
 terraform apply
 ```
 
+# Cost Note
+
+This project uses AWS EKS, EC2 worker nodes, LoadBalancer, and related cloud resources. These services may create charges while running.
+
+To avoid unnecessary AWS costs, destroy the infrastructure after testing or demo completion.
+
+---
+
+# How to Destroy Infrastructure
+
+Go to the Terraform directory:
+
+```bash
+cd infra
+```
+
+Run:
+
+```bash
+terraform destroy
+```
+
+Type:
+
+```text
+yes
+```
+
+After destroy is complete, verify in AWS Console that the following resources are removed:
+
+- EKS cluster
+- Node groups
+- EC2 instances
+- LoadBalancer
+- Security groups
+- VPC resources
+- NAT gateway if created
 ---
 
 # Monitoring & Observability
