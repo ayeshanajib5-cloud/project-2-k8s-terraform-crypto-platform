@@ -1,12 +1,12 @@
 # Production-Grade Kubernetes & Terraform Cloud Platform
 
-A cloud-native DevOps platform built to demonstrate production-level Kubernetes orchestration, Docker containerization, Terraform infrastructure provisioning, CI/CD automation, monitoring, and scalable microservices deployment using live cryptocurrency market data.
-
----
-
 ![CI/CD Pipeline](https://github.com/ayeshanajib5-cloud/project-2-k8s-terraform-crypto-platform/actions/workflows/deploy.yml/badge.svg)
 
+A cloud-native DevOps platform built to demonstrate production-level Kubernetes orchestration, Docker containerization, Terraform infrastructure provisioning, CI/CD automation, monitoring, and scalable microservices deployment using live cryptocurrency market data.
+
 > **Note:** This project provisions AWS infrastructure using Terraform and EKS. Running this project on AWS may create costs. Destroy resources after testing using `terraform destroy`.
+
+---
 
 # Project Overview
 
@@ -21,6 +21,8 @@ The platform is fully containerized with Docker, orchestrated using Kubernetes, 
 Crypto market platforms need reliable, scalable, and automated systems to collect, process, and expose live market data. This project demonstrates how a production-style cloud-native platform can handle crypto price tracking using microservices, queues, databases, monitoring, and automated deployment.
 
 The same architecture can be adapted for fintech dashboards, trading analytics, price alert systems, portfolio tracking tools, and real-time financial data pipelines.
+
+---
 
 # Tech Stack
 
@@ -45,7 +47,7 @@ The same architecture can be adapted for fintech dashboards, trading analytics, 
 
 # Docker Images
 
-The application images are published on Docker Hub:
+The application images are published on Docker Hub.
 
 ```text
 API Image:
@@ -53,7 +55,9 @@ https://hub.docker.com/r/khalil1545/crypto-api
 
 Worker Image:
 https://hub.docker.com/r/khalil1545/crypto-worker
+```
 
+---
 
 # Production Architecture
 
@@ -145,6 +149,8 @@ POST /track/ethereum
 
 # Public Deployment URLs
 
+> These public endpoints are available only while the AWS EKS infrastructure is running.
+
 Swagger Documentation:
 
 ```text
@@ -157,14 +163,6 @@ Health Endpoint:
 http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
 ```
 
-> These public endpoints are available only while the AWS EKS infrastructure is running.
-
-Swagger Documentation:
-
-```text
-http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/docs
-
-http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
 ---
 
 # Local Docker Setup
@@ -229,6 +227,8 @@ terraform plan
 terraform apply
 ```
 
+---
+
 # Cost Note
 
 This project uses AWS EKS, EC2 worker nodes, LoadBalancer, and related cloud resources. These services may create charges while running.
@@ -266,6 +266,7 @@ After destroy is complete, verify in AWS Console that the following resources ar
 - Security groups
 - VPC resources
 - NAT gateway if created
+
 ---
 
 # Monitoring & Observability
@@ -344,7 +345,7 @@ Pipeline tasks:
 
 ## Kubernetes Worker Nodes
 
-![Kubernetes Nodes](images/kubectel-nodes.png)
+![Kubernetes Nodes](images/kubectl-nodes.png)
 
 ---
 
@@ -386,7 +387,7 @@ Pipeline tasks:
 
 ## Redis & PostgreSQL Services
 
-![Redis PostgreSQL](images/redis-postgress.png)
+![Redis PostgreSQL](images/redis-postgres.png)
 
 ---
 
