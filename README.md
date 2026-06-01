@@ -345,7 +345,7 @@ Pipeline tasks:
 
 ## Kubernetes Worker Nodes
 
-![Kubernetes Nodes](images/kubectl-nodes.png)
+![Kubernetes Nodes](images/kubectel-nodes.png)
 
 ---
 
@@ -387,7 +387,7 @@ Pipeline tasks:
 
 ## Redis & PostgreSQL Services
 
-![Redis PostgreSQL](images/redis-postgres.png)
+![Redis PostgreSQL](images/redis-postgress.png)
 
 ---
 
