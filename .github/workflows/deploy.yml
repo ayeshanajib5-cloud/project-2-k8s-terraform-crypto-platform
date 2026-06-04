@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Deploy to AWS EKS
 
 on:
   push:
@@ -6,32 +6,63 @@ on:
       - main
 
 jobs:
-
-  build-and-test:
+  build-push-deploy:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          python-version: "3.11"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      - name: Install API Dependencies
-        run: |
-          pip install -r services/api/requirements.txt
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install Worker Dependencies
+      - name: Build and push API image
         run: |
-          pip install -r services/worker/requirements.txt
+          docker build -t khalil1545/crypto-api:latest ./services/api
+          docker push khalil1545/crypto-api:latest
 
-      - name: Build API Docker Image
+      - name: Build and push Worker image
         run: |
-          docker build -t crypto-api ./services/api
+          docker build -t khalil1545/crypto-worker:latest ./services/worker
+          docker push khalil1545/crypto-worker:latest
 
-      - name: Build Worker Docker Image
+      - name: Update kubeconfig for EKS
         run: |
-          docker build -t crypto-worker ./services/worker
+          aws eks update-kubeconfig --region us-east-1 --name crypto-platform-eks
+
+      - name: Deploy Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/secrets.yaml
+          kubectl apply -f k8s/redis-deployment.yaml
+          kubectl apply -f k8s/postgres-deployment.yaml
+          kubectl apply -f k8s/services.yaml
+          kubectl apply -f k8s/api-deployment.yaml
+          kubectl apply -f k8s/worker-deployment.yaml
+          kubectl apply -f k8s/hpa.yaml
+
+      - name: Restart deployments
+        run: |
+          kubectl rollout restart deployment/crypto-api -n crypto-platform
+          kubectl rollout restart deployment/crypto-worker -n crypto-platform
+
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/crypto-api -n crypto-platform --timeout=180s
+          kubectl rollout status deployment/crypto-worker -n crypto-platform --timeout=180s
+
+      - name: Smoke test health endpoint
+        run: |
+          sleep 30
+          curl -f http://ae55e7c83580346679cf02f3afb46863-1159999103.us-east-1.elb.amazonaws.com:8000/health
