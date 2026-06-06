@@ -306,14 +306,24 @@ CloudWatch log groups are configured for AWS EKS cluster logging.
 
 # CI/CD Pipeline
 
-GitHub Actions pipeline automatically runs on every push to the main branch.
+GitHub Actions automatically runs on every push to the main branch.
 
-Pipeline tasks:
+Pipeline workflow:
 
-- Checkout repository
-- Install dependencies
-- Build Docker images
-- Validate deployment workflow
+* Checkout repository
+* Validate Docker Compose configuration
+* Build API Docker image
+* Build Worker Docker image
+* Push images to Docker Hub
+* Authenticate with AWS
+* Update kubeconfig for EKS
+* Deploy Kubernetes manifests
+* Restart Kubernetes deployments
+* Verify rollout status
+* Execute smoke tests against application endpoints
+
+The deployment pipeline enables automated delivery of application updates to Amazon EKS with rollout verification and deployment validation.
+
 
 ---
 
@@ -420,8 +430,6 @@ Pipeline tasks:
 - Amazon ECR integration
 - HTTPS with cert-manager
 - ArgoCD GitOps deployment
-- AWS IAM least-privilege roles
-- Terraform remote state with S3 and DynamoDB
 - API authentication and rate limiting
 - Advanced alerting rules
 - Multi-environment deployment strategy
@@ -445,3 +453,6 @@ Completed successfully:
 - Public API deployment
 - Horizontal Pod Autoscaling
 - Redis & PostgreSQL integration
+- Remote Terraform state storage (S3 + state locking)
+- Terraform infrastructure modularization
+- Automated CI/CD deployment to AWS EKS
