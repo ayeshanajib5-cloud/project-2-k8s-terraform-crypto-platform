@@ -17,7 +17,7 @@ spec:
         app: crypto-worker
 
     spec:
-      serviceAccountName: crypto-api-sa
+      serviceAccountName: crypto-worker-sa
       containers:
         - name: crypto-worker
           image: khalil1545/crypto-worker:latest
@@ -58,7 +58,6 @@ spec:
             requests:
               cpu: "100m"
               memory: "128Mi"
-
             limits:
               cpu: "500m"
               memory: "256Mi"

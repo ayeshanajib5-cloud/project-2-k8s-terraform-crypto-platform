@@ -28,7 +28,7 @@ spec:
 
           ports:
             - containerPort: 8000
-            serviceAccountName: crypto-api-sa
+
           env:
             - name: REDIS_HOST
               valueFrom:
