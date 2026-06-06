@@ -20,6 +20,7 @@ spec:
         app: crypto-api
 
     spec:
+      serviceAccountName: crypto-api-sa
       containers:
         - name: crypto-api
           image: khalil1545/crypto-api:latest
@@ -27,7 +28,7 @@ spec:
 
           ports:
             - containerPort: 8000
-
+            serviceAccountName: crypto-api-sa
           env:
             - name: REDIS_HOST
               valueFrom:

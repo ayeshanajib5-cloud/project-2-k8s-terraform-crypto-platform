@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   namespace: crypto-platform
 spec:
+  serviceName: postgres-service
   replicas: 1
   selector:
     matchLabels:
@@ -24,4 +25,22 @@ spec:
             - name: POSTGRES_USER
               value: crypto_user
             - name: POSTGRES_PASSWORD
-              value: crypto_pass
+              valueFrom:
+                secretKeyRef:
+                  name: crypto-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        storageClassName: ebs-sc
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

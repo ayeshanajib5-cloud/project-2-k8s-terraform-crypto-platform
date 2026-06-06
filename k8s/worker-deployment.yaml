@@ -17,6 +17,7 @@ spec:
         app: crypto-worker
 
     spec:
+      serviceAccountName: crypto-api-sa
       containers:
         - name: crypto-worker
           image: khalil1545/crypto-worker:latest
