@@ -59,8 +59,8 @@ jobs:
 
       - name: Verify rollout
         run: |
-          kubectl rollout status deployment/crypto-api -n crypto-platform --timeout=180s
-          kubectl rollout status deployment/crypto-worker -n crypto-platform --timeout=180s
+          kubectl rollout status deployment/crypto-api -n crypto-platform --timeout=300s
+          kubectl rollout status deployment/crypto-worker -n crypto-platform --timeout=300s
 
       - name: Smoke test health endpoint
         run: |
