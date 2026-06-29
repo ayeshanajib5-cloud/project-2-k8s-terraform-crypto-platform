@@ -4,10 +4,30 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
+  validate:
+    name: Validate repository hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure generated state and real secrets are not committed
+        run: |
+          test ! -f infra/terraform.tfstate
+          test ! -f infra/terraform.tfstate.backup
+          test ! -f k8s/secrets.yaml
+
   build-push-deploy:
     runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
       - name: Checkout code
@@ -40,11 +60,18 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name crypto-platform-eks
 
+      - name: Create Kubernetes secret from GitHub Secrets
+        run: |
+          kubectl create secret generic crypto-secrets \
+            --namespace crypto-platform \
+            --from-literal=DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Deploy Kubernetes manifests
         run: |
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/configmap.yaml
-          kubectl apply -f k8s/secrets.yaml
           kubectl apply -f k8s/redis-deployment.yaml
           kubectl apply -f k8s/postgres-deployment.yaml
           kubectl apply -f k8s/services.yaml

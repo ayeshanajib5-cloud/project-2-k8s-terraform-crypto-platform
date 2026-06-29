@@ -188,7 +188,10 @@ Apply Kubernetes manifests:
 ```bash
 kubectl apply -f k8s/namespace.yaml
 kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secrets.yaml
+kubectl create secret generic crypto-secrets \
+  --namespace crypto-platform \
+  --from-literal=DB_PASSWORD="$DB_PASSWORD" \
+  --from-literal=POSTGRES_PASSWORD="$DB_PASSWORD"
 kubectl apply -f k8s/redis-deployment.yaml
 kubectl apply -f k8s/postgres-deployment.yaml
 kubectl apply -f k8s/services.yaml
@@ -205,6 +208,8 @@ kubectl get pods -n crypto-platform
 kubectl get svc -n crypto-platform
 kubectl get hpa -n crypto-platform
 ```
+
+`k8s/secrets.example.yaml` documents the expected Secret shape. Do not commit real Kubernetes Secret manifests or local Terraform state files.
 
 ---
 
